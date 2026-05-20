@@ -2,3 +2,6 @@
 .*swq
 checkers_enabled/01basic.rb
 custom_splitter.rb
+.DS_Store
+__pycache__/
+*.pyc

@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Example Corp Password Analysis Report</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: Arial, sans-serif;
+      font-size: 10pt;
+      padding: 6px 12px;
+      max-width: 7.7in;
+      line-height: 1.2;
+    }
+    h1 { font-size: 14pt; margin-bottom: 4px; text-align: center; }
+    h2 { font-size: 9.5pt; margin: 4px 0 2px 0; background: #333; color: white; padding: 2px 5px; }
+    .container { display: flex; gap: 8px; }
+    .col { flex: 1; min-width: 47%; max-width: 49%; }
+    table { width: 100%; border-collapse: collapse; margin-bottom: 2px; }
+    th, td { border: 1px solid #ccc; padding: 1px 3px; text-align: left; font-size: 9pt; line-height: 1.15; }
+    th { background: #f0f0f0; font-weight: bold; }
+    .right { text-align: right; }
+    .center { text-align: center; }
+    .critical { background: #ffcccc; }
+    .high { background: #ffe6cc; }
+    .medium { background: #ffffcc; }
+    .compliant { background: #ccffcc; }
+    .summary { background: #f8f8f8; font-size: 8.5pt; }
+    .summary-box { background: #f5f5f5; padding: 4px; margin-bottom: 5px; }
+    .summary-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px; text-align: center; }
+    .summary-item { padding: 2px; }
+    .summary-value { font-size: 13pt; font-weight: bold; line-height: 1.1; }
+    .summary-value.critical { color: #c00; }
+    .summary-value.green { color: #090; }
+    .summary-label { font-size: 8pt; color: #666; }
+    .bar { background: #4a90d9; height: 7px; display: inline-block; }
+    code { background: #eee; padding: 0 2px; font-size: 8.5pt; font-family: monospace; }
+    .fail { color: #c00; font-weight: bold; }
+    .pass { color: #090; font-weight: bold; }
+    .compliance-section { margin-top: 5px; page-break-inside: avoid; }
+    .compliance-table th, .compliance-table td { padding: 2px 5px; vertical-align: middle; font-size: 8.5pt; line-height: 1.2; }
+    .compliance-table th { background: #333; color: white; font-size: 8.5pt; }
+    .compliance-table tbody tr:nth-child(even) { background: #fafafa; }
+    .compliance-table .framework-name { font-weight: bold; white-space: nowrap; }
+    .compliance-table .citation { font-family: "SF Mono", Menlo, Consolas, monospace; font-size: 8pt; color: #444; }
+    .compliance-table .status-cell { text-align: right; white-space: nowrap; }
+    .compliance-table .status-pct { font-size: 10pt; font-weight: bold; }
+    .compliance-table .status-verdict { font-size: 7.5pt; color: #666; margin-left: 3px; }
+    @page { size: letter; margin: 0.3in; }
+    @media print {
+      body { padding: 0; max-width: none; font-size: 9pt; }
+      .container { gap: 8px; }
+      h1 { font-size: 13pt; margin-bottom: 3px; }
+      h2 { margin: 3px 0 1px 0; font-size: 9pt; }
+      table { margin-bottom: 1px; }
+      th, td { padding: 1px 3px; font-size: 8.5pt; }
+      .summary-box { padding: 3px; margin-bottom: 3px; }
+      .summary-value { font-size: 12pt; }
+      .summary-label { font-size: 7.5pt; }
+      .compliance-section { margin-top: 3px; }
+      .compliance-table th, .compliance-table td { padding: 1px 4px; font-size: 8pt; }
+      .compliance-table .status-pct { font-size: 9.5pt; }
+    }
+  </style>
+</head>
+<body>
+
+<h1>Example Corp Password Analysis Report</h1>
+
+<div class="summary-box">
+  <div class="summary-grid">
+    <div class="summary-item">
+      <div class="summary-value green">22,468</div>
+      <div class="summary-label">Total Password Hashes</div>
+    </div>
+    <div class="summary-item">
+      <div class="summary-value">12,016</div>
+      <div class="summary-label">Hashes Cracked</div>
+    </div>
+    <div class="summary-item">
+      <div class="summary-value">10,543</div>
+      <div class="summary-label">Unique Passwords</div>
+    </div>
+    <div class="summary-item">
+      <div class="summary-value critical">53.48%</div>
+      <div class="summary-label">Cracked</div>
+    </div>
+  </div>
+</div>
+
+<div class="container">
+  <div class="col">
+    <h2>Top 10 Cracked Passwords</h2>
+    <table>
+      <tr><th>#</th><th>Password</th><th class="right">Count</th><th class="right">%</th></tr>
+      <tr><td>1</td><td><code>********</code></td><td class="right">635</td><td class="right">5.29</td></tr>
+      <tr><td>2</td><td><code>**********</code></td><td class="right">367</td><td class="right">3.06</td></tr>
+      <tr><td>3</td><td><code>***********</code></td><td class="right">197</td><td class="right">1.64</td></tr>
+      <tr><td>4</td><td><code>***********</code></td><td class="right">132</td><td class="right">1.10</td></tr>
+      <tr><td>5</td><td><code>***************</code></td><td class="right">96</td><td class="right">0.80</td></tr>
+      <tr><td>6</td><td><code>********</code></td><td class="right">39</td><td class="right">0.32</td></tr>
+      <tr><td>7</td><td><code>**********************</code></td><td class="right">4</td><td class="right">0.03</td></tr>
+      <tr><td>8</td><td><code>*******</code></td><td class="right">2</td><td class="right">0.02</td></tr>
+      <tr><td>9</td><td><code>*******</code></td><td class="right">2</td><td class="right">0.02</td></tr>
+      <tr><td>10</td><td><code>********</code></td><td class="right">2</td><td class="right">0.02</td></tr>
+    </table>
+
+    <h2>Key Findings</h2>
+    <table>
+      <tr><th>Finding</th><th>Severity</th></tr>
+      <tr class="critical"><td>53.5% of passwords cracked</td><td>Critical</td></tr>
+      <tr class="high"><td>66.3% use predictable patterns</td><td>High</td></tr>
+      <tr class="critical"><td>22.9% use 8 or fewer chars</td><td>Critical</td></tr>
+      <tr class="medium"><td>95.9% use 15 or fewer chars</td><td>Medium</td></tr>
+    </table>
+
+    <h2>Character Analysis</h2>
+    <table>
+      <tr><th>Category</th><th class="right">Count</th><th class="right">%</th></tr>
+      <tr><td>Mixed alpha + special + num</td><td class="right">5984</td><td class="right">49.8</td></tr>
+      <tr><td>Mixed alpha + num</td><td class="right">4186</td><td class="right">34.9</td></tr>
+      <tr><td>lower alpha + num</td><td class="right">406</td><td class="right">3.4</td></tr>
+      <tr><td>lower alpha + special + num</td><td class="right">151</td><td class="right">1.3</td></tr>
+    </table>
+
+    <h2>Pattern Analysis</h2>
+    <table>
+      <tr><th>Pattern Type</th><th class="right">Count</th><th class="right">%</th></tr>
+      <tr><td>Other/Complex</td><td class="right">6369</td><td class="right">53.0</td></tr>
+      <tr><td>String+Digit</td><td class="right">2704</td><td class="right">22.5</td></tr>
+      <tr><td>DigitString</td><td class="right">1571</td><td class="right">13.1</td></tr>
+      <tr><td>Top trailing 4: 2022</td><td class="right">274</td><td class="right">2.3</td></tr>
+    </table>
+
+  </div>
+  <div class="col">
+    <h2>Top 10 Base Words</h2>
+    <table>
+      <tr><th>#</th><th>Base Word</th><th class="right">Count</th><th class="right">%</th></tr>
+      <tr><td>1</td><td><code>****</code></td><td class="right">635</td><td class="right">5.29</td></tr>
+      <tr><td>2</td><td><code>********</code></td><td class="right">383</td><td class="right">3.19</td></tr>
+      <tr><td>3</td><td><code>*****</code></td><td class="right">367</td><td class="right">3.06</td></tr>
+      <tr><td>4</td><td><code>******</code></td><td class="right">205</td><td class="right">1.71</td></tr>
+      <tr><td>5</td><td><code>*******</code></td><td class="right">198</td><td class="right">1.65</td></tr>
+      <tr><td>6</td><td><code>********</code></td><td class="right">163</td><td class="right">1.36</td></tr>
+      <tr><td>7</td><td><code>******</code></td><td class="right">134</td><td class="right">1.12</td></tr>
+      <tr><td>8</td><td><code>************</code></td><td class="right">96</td><td class="right">0.80</td></tr>
+      <tr><td>9</td><td><code>********</code></td><td class="right">87</td><td class="right">0.72</td></tr>
+      <tr><td>10</td><td><code>*******</code></td><td class="right">74</td><td class="right">0.62</td></tr>
+    </table>
+
+    <h2>Password Length</h2>
+    <table>
+      <tr><th>Length</th><th class="right">Count</th><th class="right">%</th><th></th></tr>
+      <tr><td>8 chars</td><td class="right">2219</td><td class="right">18.5</td><td><span class="bar" style="width:100%"></span></td></tr>
+      <tr><td>10 chars</td><td class="right">2165</td><td class="right">18.0</td><td><span class="bar" style="width:97%"></span></td></tr>
+      <tr><td>12 chars</td><td class="right">1778</td><td class="right">14.8</td><td><span class="bar" style="width:80%"></span></td></tr>
+      <tr><td>11 chars</td><td class="right">1666</td><td class="right">13.9</td><td><span class="bar" style="width:75%"></span></td></tr>
+      <tr><td>9 chars</td><td class="right">1116</td><td class="right">9.3</td><td><span class="bar" style="width:50%"></span></td></tr>
+      <tr><td>13 chars</td><td class="right">1043</td><td class="right">8.7</td><td><span class="bar" style="width:47%"></span></td></tr>
+      <tr><td>14 chars</td><td class="right">582</td><td class="right">4.8</td><td><span class="bar" style="width:26%"></span></td></tr>
+      <tr><td>15 chars</td><td class="right">416</td><td class="right">3.5</td><td><span class="bar" style="width:18%"></span></td></tr>
+      <tr class="summary"><td colspan="4"><b>Compliance:</b> 36% meet 12+ char minimum</td></tr>
+    </table>
+
+    <h2>Recommendations</h2>
+    <table>
+      <tr><td>1. Enforce minimum 12-char length (PCI 4.0)</td></tr>
+      <tr><td>2. Block common patterns &amp; sequences</td></tr>
+      <tr><td>3. Implement breached password checking</td></tr>
+      <tr><td>4. Consider 15+ char passphrase policy</td></tr>
+    </table>
+
+  </div>
+</div>
+
+<div class="compliance-section">
+  <h2>Compliance Assessment</h2>
+  <table class="compliance-table">
+    <colgroup>
+      <col style="width:18%">
+      <col style="width:24%">
+      <col style="width:38%">
+      <col style="width:20%">
+    </colgroup>
+    <thead>
+      <tr>
+        <th>Framework</th>
+        <th>Citation</th>
+        <th>Requirement</th>
+        <th class="right">Status</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="framework-name">NIST SP 800-63B</td>
+        <td class="citation">Rev 4 &sect;3.1.1.2 (Aug 2025)</td>
+        <td>Min 15 chars SHALL (single-factor)</td>
+        <td class="status-cell"><span class="status-pct fail">7.6%</span><span class="status-verdict fail">FAIL</span></td>
+      </tr>
+      <tr>
+        <td class="framework-name">PCI DSS</td>
+        <td class="citation">v4.0.1 Req 8.3.6</td>
+        <td>Min 12 chars (8 only if legacy system can't support 12)</td>
+        <td class="status-cell"><span class="status-pct fail">35%</span><span class="status-verdict fail">FAIL</span></td>
+      </tr>
+      <tr>
+        <td class="framework-name">HIPAA</td>
+        <td class="citation">45 CFR 164.308(a)(5)(ii)(D)</td>
+        <td>No explicit length; HHS OCR guidance recommends NIST 800-63B alignment. NPRM pending (90 FR 898)</td>
+        <td class="status-cell"><span class="status-pct fail">7.6%</span><span class="status-verdict fail">FAIL (per NIST)</span></td>
+      </tr>
+      <tr>
+        <td class="framework-name">CIS Controls</td>
+        <td class="citation">v8.1 Safeguard 5.2</td>
+        <td>Min 14 chars non-MFA / 8 chars with MFA</td>
+        <td class="status-cell"><span class="status-pct fail">12%</span><span class="status-verdict fail">FAIL</span></td>
+      </tr>
+      <tr>
+        <td class="framework-name">Composition Rules</td>
+        <td class="citation">NIST 800-63B-4 &sect;3.1.1.2</td>
+        <td>SHALL NOT impose composition rules (prohibited)</td>
+        <td class="status-cell"><span class="status-pct">51%</span><span class="status-verdict">legacy enforced</span></td>
+      </tr>
+      <tr class="critical">
+        <td class="framework-name">Blank / Empty</td>
+        <td class="citation">AD UF_PASSWD_NOTREQD flag</td>
+        <td>Accounts with empty NT hash (7 found)</td>
+        <td class="status-cell"><span class="status-pct fail">0.1%</span><span class="status-verdict fail">of cracked</span></td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+</body>
+</html>

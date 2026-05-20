@@ -27,6 +27,47 @@ So, what does this new version do? The best way to describe it is to see some
 examples so go to the [Pipal project page](http://digi.ninja/projects/pipal.php)
 for a full walk through of a sample analysis.
 
+## Quick Start
+
+### One Command (Recommended)
+```bash
+python3 generate_report.py -p passwords.txt -t 10000 -o report.html
+```
+
+| Option | Description |
+|--------|-------------|
+| `-p` | Raw password file (one password per line) |
+| `-t` | Total password hashes before cracking (used to calculate crack percentage) |
+| `-o` | Output HTML filename |
+
+This runs pipal automatically and generates the HTML report in one step.
+
+**Example:**
+```bash
+$ python3 generate_report.py -p cracked_passwords.txt -t 444019 -o audit_report.html
+Running pipal on cracked_passwords.txt...
+Parsing pipal output...
+Generating report...
+
+Report generated: audit_report.html
+  Total Hashes: 444,019 | Cracked: 242,897 (54.70%)
+```
+
+### Alternative: Two-Step Process
+```bash
+# Step 1: Run Pipal
+ruby pipal.rb passwords.txt > pipal_output.txt
+
+# Step 2: Generate report from pipal output
+python3 generate_report.py -i pipal_output.txt -t 10000 -o report.html
+```
+
+### Interactive Mode
+```bash
+python3 generate_report.py
+```
+Prompts for all inputs interactively.
+
 ## Install / Usage
 
 The app will only work with `Ruby 1.9.x` and newer, if you try to run it in any previous
@@ -76,7 +117,146 @@ Pipal won't try to perform a look up.
 
 Checkers are the scripts that do the actual work, to understand how these work, see the [README_modular.md](README_modular.md) file.
 
+## HTML Report Generator
+
+The `generate_report.py` script transforms Pipal's text output into a professional, print-ready HTML report suitable for management and compliance documentation.
+
+### Features
+
+- **One-command workflow** - runs pipal and generates HTML report automatically
+- **Two-column layout** optimized for 8.5" x 11" paper
+- **Automatic section distribution** based on content size for balanced columns
+- **Obfuscated passwords** (shown as asterisks for security in reports)
+- **Color-coded severity** indicators (Critical/High/Medium)
+- **Compliance assessment** against major security standards
+
+### Report Sections
+
+| Section | Description |
+|---------|-------------|
+| **Summary Box** | Total hashes, cracked count, unique passwords, crack percentage |
+| **Top 10 Passwords** | Most common passwords (obfuscated) |
+| **Top 10 Base Words** | Common root words used in passwords |
+| **Key Findings** | Critical issues with severity ratings |
+| **Password Length** | Distribution with visual bar chart + compliance summary |
+| **Character Analysis** | Character set composition breakdown |
+| **Pattern Analysis** | Common patterns and trailing digit sequences |
+| **Compliance Assessment** | Pass/Fail status for NIST, PCI, HIPAA, CIS |
+| **Recommendations** | Actionable security improvements |
+
+### Usage Options
+
+**One Command (from raw passwords):**
+```bash
+python3 generate_report.py -p passwords.txt -t 10000 -o report.html
+```
+
+**From existing pipal output:**
+```bash
+python3 generate_report.py -i pipal_output.txt -t 10000 -o report.html
+```
+
+**Interactive Mode:**
+```bash
+python3 generate_report.py
+```
+
+**Command-Line Options:**
+| Option | Long | Description |
+|--------|------|-------------|
+| `-p` | `--passwords` | Raw password file (runs pipal automatically) |
+| `-i` | `--input` | Existing pipal output file |
+| `-t` | `--total` | Total password hashes before cracking |
+| `-o` | `--output` | Output HTML filename (default: password_report.html) |
+
+### Compliance Assessment
+
+The report evaluates password compliance against major security standards. Citations
+verified against primary sources (NIST CSRC, PCI SSC, HHS OCR, CIS) as of May 2026.
+See `README_report_generator.md` for the full citation table.
+
+| Framework | Citation | Threshold |
+|-----------|----------|-----------|
+| **NIST SP 800-63B** | Rev 4 §3.1.1.2 (Aug 2025) | 15 chars (single-factor) |
+| **PCI DSS** | v4.0.1 Req 8.3.6 | 12 chars |
+| **HIPAA** | 45 CFR 164.308(a)(5)(ii)(D) | No explicit length; OCR -> NIST 800-63B |
+| **CIS Controls** | v8.1 Safeguard 5.2 | 14 chars non-MFA / 8 chars MFA |
+| **Composition Rules** | NIST 800-63B-4 §3.1.1.2 | Prohibited (SHALL NOT) |
+
+**Pass/Fail Logic:**
+- **PASS**: 100% of cracked passwords meet the minimum length requirement
+- **FAIL**: Any passwords below the minimum length requirement
+- Percentages are calculated using `floor()` for strict compliance (99.5% displays as 99%, not rounded to 100%)
+- Percentages show what portion of passwords are compliant
+
+**Calculation Method:**
+- All compliance percentages are calculated from pipal's complete password length distribution
+- Formula: `(count of passwords >= N chars) / total_cracked * 100`
+- The tool captures ALL password lengths from pipal output (no truncation)
+- Data coverage validation ensures all passwords are accounted for in calculations
+
+**Example Output:**
+```
+Framework         Citation                       Requirement                              Status
+NIST SP 800-63B   Rev 4 §3.1.1.2 (Aug 2025)      Min 15 chars SHALL (single-factor)        7% FAIL
+PCI DSS           v4.0.1 Req 8.3.6               Min 12 chars                              35% FAIL
+HIPAA             45 CFR 164.308(a)(5)(ii)(D)    No explicit length; OCR -> NIST 800-63B   7% FAIL (per NIST)
+CIS Controls      v8.1 Safeguard 5.2             Min 14 chars non-MFA / 8 chars MFA        12% FAIL
+Composition Rules NIST 800-63B-4 §3.1.1.2        SHALL NOT impose composition rules        51% legacy enforced
+```
+
+**Data Coverage Warning:**
+If the sum of password lengths doesn't equal the total cracked count (e.g., due to parsing issues), the report displays a warning showing the percentage of passwords analyzed.
+
+### Requirements
+
+- Python 3.x (3.6+ recommended)
+- Ruby 1.9.x or newer (for pipal.rb)
+- No external Python dependencies (uses only standard library)
+
+### Sample Output
+
+The generated HTML report includes:
+- Executive summary with key metrics (total hashes, cracked, unique, crack rate)
+- Visual distribution charts with bar graphs
+- Color-coded compliance pass/fail indicators
+- Prioritized security recommendations
+
 ## Version History
+
+### Report Generator Updates (May 2026) — Framework Citation Audit
+
+All compliance citations verified against primary sources (NIST CSRC, PCI SSC,
+HHS OCR/eCFR, CIS) on 2026-05-19. Key corrections:
+
+1. **NIST SP 800-63B threshold raised to 15 chars** - SP 800-63B-4 (Aug 1, 2025) made 15 characters a normative SHALL for single-factor passwords. NIST and HIPAA rows now score against the 15-char floor, not 8.
+2. **Compliance table refactored to 4 columns** - Framework / Citation / Requirement / Status, rendered as a standalone full-width section after the 2-column body. Citations reference the exact section/requirement.
+3. **HIPAA framing corrected** - Removed "Defers to NIST 800-63B." HIPAA Security Rule has no explicit length requirement; HHS OCR guidance recommends NIST 800-63B alignment. NPRM (90 FR 898, Jan 2025) noted as pending finalization.
+4. **CIS Controls value pair surfaced** - "14 chars non-MFA / 8 chars MFA" per v8.1 Safeguard 5.2.
+5. **Composition rules reframed** - Cited the SHALL NOT in NIST 800-63B-4 §3.1.1.2.
+6. **CSS tightened** - Body 10pt, headers/tables compacted, @page margin 0.3in. Targets single-letter-page rendering.
+
+### Report Generator Updates (December 2025)
+
+**Compliance Calculation Accuracy Fixes:**
+
+1. **Removed 15-entry truncation limit** - Previously only stored the first 15 password lengths from pipal output, causing data loss for datasets with many distinct lengths. Now captures ALL password lengths.
+
+2. **Fixed NIST/HIPAA percentage calculation** - Correctly calculates passwords >= 8 characters by summing from the complete length distribution. Note: Pipal's "More than eight characters" stat means strictly >8 (9+ chars), not >=8, so direct use of that stat would give incorrect NIST compliance numbers.
+
+3. **Added data completeness validation** - Verifies that the sum of password length counts equals the total cracked count. Displays a warning if data coverage is below 100%.
+
+4. **Strict compliance percentages** - Changed from `round()` to `floor()` for compliance calculations. This ensures 99.5% displays as 99% (FAIL), not rounded to 100% (PASS).
+
+5. **Fixed cracked count calculation** - When using `-p` flag with a raw password file, the cracked count is now based on the total file line count (including blank lines), not pipal's parsed count. This ensures the crack percentage matches the actual output from cracking tools like hashcat or john the ripper, where blank lines may represent empty passwords or hash entries.
+
+**Impact:**
+- Large datasets (>15 distinct password lengths) now report accurate compliance percentages
+- NIST/HIPAA compliance is correctly calculated as passwords >= 8 chars (not >8)
+- Crack percentage now reflects actual cracking tool output (including blank lines)
+- Edge cases where rounding could incorrectly show PASS are now handled strictly
+
+---
 
 Version 2 - Two big changes, the first a massive speed increase. This patch was
 submitted by Stefan Venken who said a small mention would be good enough, I want
