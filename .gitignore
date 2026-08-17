@@ -9,3 +9,15 @@ __pycache__/
 CHANGELOG.md
 docs/sessions/
 docs/SESSION-STATE.md
+
+# AI assistant artifacts (keep out of this public repo)
+.claude/
+CLAUDE.md
+.cursor/
+.cursorrules
+.aider*
+.continue/
+.codeium/
+.windsurf/
+.github/copilot-instructions.md
+AGENTS.md
