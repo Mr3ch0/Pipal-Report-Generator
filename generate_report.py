@@ -430,31 +430,31 @@ class PasswordReportGenerator:
       <tr>
         <td class="framework-name">NIST SP 800-63B</td>
         <td class="citation">Rev 4 &sect;3.1.1.2 (Aug 2025)</td>
-        <td>Min 15 chars SHALL (single-factor)</td>
-        <td class="status-cell"><span class="status-pct {nist_status}">{pct_15_display}% Compliant</span><span class="status-verdict {nist_status}">{nist_verdict}</span></td>
+        <td>Minimum 15 characters required (single-factor logins)</td>
+        <td class="status-cell"><span class="status-pct compliant">{pct_15_display}% Compliant</span><span class="status-verdict {nist_status}">{nist_verdict}</span></td>
       </tr>
       <tr>
         <td class="framework-name">PCI DSS</td>
         <td class="citation">v4.0.1 Req 8.3.6</td>
         <td>Min 12 chars</td>
-        <td class="status-cell"><span class="status-pct {pci_status}">{pct_12_display}% Compliant</span><span class="status-verdict {pci_status}">{pci_verdict}</span></td>
+        <td class="status-cell"><span class="status-pct compliant">{pct_12_display}% Compliant</span><span class="status-verdict {pci_status}">{pci_verdict}</span></td>
       </tr>
       <tr>
         <td class="framework-name">HIPAA</td>
         <td class="citation">45 CFR 164.308(a)(5)(ii)(D)</td>
         <td>No explicit length; HHS OCR guidance recommends NIST 800-63B alignment. NPRM pending (90 FR 898)</td>
-        <td class="status-cell"><span class="status-pct {hipaa_status}">{pct_15_display}% Compliant</span><span class="status-verdict {hipaa_status}">{hipaa_verdict}</span></td>
+        <td class="status-cell"><span class="status-pct compliant">{pct_15_display}% Compliant</span><span class="status-verdict {hipaa_status}">{hipaa_verdict}</span></td>
       </tr>
       <tr>
         <td class="framework-name">CIS Controls</td>
         <td class="citation">v8.1 Safeguard 5.2</td>
         <td>Min 14 chars non-MFA / 8 chars with MFA</td>
-        <td class="status-cell"><span class="status-pct {cis_status}">{pct_14_display}% Compliant</span><span class="status-verdict {cis_status}">{cis_verdict}</span></td>
+        <td class="status-cell"><span class="status-pct compliant">{pct_14_display}% Compliant</span><span class="status-verdict {cis_status}">{cis_verdict}</span></td>
       </tr>
       <tr>
         <td class="framework-name">Composition Rules</td>
         <td class="citation">NIST 800-63B-4 &sect;3.1.1.2</td>
-        <td>SHALL NOT impose composition rules (prohibited)</td>
+        <td>Complexity and composition rules not permitted</td>
         <td class="status-cell"><span class="status-pct">{pct_complexity_display}%</span><span class="status-verdict">legacy enforced</span></td>
       </tr>{blank_row}{coverage_note}
     </tbody>
@@ -466,7 +466,7 @@ class PasswordReportGenerator:
         content = '''<table>
       <tr><td>1. Enforce 15+ char minimum (NIST SP 800-63B-4 &sect;3.1.1.2)</td></tr>
       <tr><td>2. Block common patterns, sequences &amp; breached passwords</td></tr>
-      <tr><td>3. Remove legacy composition rules (NIST 800-63B-4 SHALL NOT)</td></tr>
+      <tr><td>3. Remove legacy complexity rules (not permitted under NIST 800-63B-4)</td></tr>
       <tr><td>4. Audit accounts with UF_PASSWD_NOTREQD flag set</td></tr>
     </table>'''
         sections.append(('Recommendations', content, 5))
@@ -525,15 +525,16 @@ class PasswordReportGenerator:
     code {{ background: #eee; padding: 0 2px; font-size: 8.5pt; font-family: monospace; }}
     .fail {{ color: #c00; font-weight: bold; }}
     .pass {{ color: #090; font-weight: bold; }}
+    .compliant {{ color: #0a0; font-weight: bold; }}
     .compliance-section {{ margin-top: 5px; page-break-inside: avoid; }}
-    .compliance-table th, .compliance-table td {{ padding: 2px 5px; vertical-align: middle; font-size: 8.5pt; line-height: 1.2; }}
-    .compliance-table th {{ background: #333; color: white; font-size: 8.5pt; }}
+    .compliance-table th, .compliance-table td {{ padding: 4px 8px; vertical-align: middle; font-size: 10pt; line-height: 1.35; }}
+    .compliance-table th {{ background: #333; color: white; font-size: 10pt; }}
     .compliance-table tbody tr:nth-child(even) {{ background: #fafafa; }}
     .compliance-table .framework-name {{ font-weight: bold; white-space: nowrap; }}
     .compliance-table .citation {{ font-family: "SF Mono", Menlo, Consolas, monospace; font-size: 8pt; color: #444; }}
     .compliance-table .status-cell {{ text-align: right; white-space: nowrap; }}
-    .compliance-table .status-pct {{ font-size: 10pt; font-weight: bold; }}
-    .compliance-table .status-verdict {{ font-size: 7.5pt; color: #666; margin-left: 3px; }}
+    .compliance-table .status-pct {{ font-size: 13pt; font-weight: bold; }}
+    .compliance-table .status-verdict {{ font-size: 11pt; font-weight: bold; margin-left: 7px; }}
     @page {{ size: letter; margin: 0.3in; }}
     @media print {{
       body {{ padding: 0; max-width: none; font-size: 9pt; }}
@@ -546,8 +547,9 @@ class PasswordReportGenerator:
       .summary-value {{ font-size: 12pt; }}
       .summary-label {{ font-size: 7.5pt; }}
       .compliance-section {{ margin-top: 3px; }}
-      .compliance-table th, .compliance-table td {{ padding: 1px 4px; font-size: 8pt; }}
-      .compliance-table .status-pct {{ font-size: 9.5pt; }}
+      .compliance-table th, .compliance-table td {{ padding: 3px 6px; font-size: 9.5pt; }}
+      .compliance-table .status-pct {{ font-size: 12pt; }}
+      .compliance-table .status-verdict {{ font-size: 10pt; }}
     }}
   </style>
 </head>
