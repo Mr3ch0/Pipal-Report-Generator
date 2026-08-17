@@ -141,7 +141,7 @@ The `generate_report.py` script transforms Pipal's text output into a profession
 | **Password Length** | Distribution with visual bar chart + compliance summary |
 | **Character Analysis** | Character set composition breakdown |
 | **Pattern Analysis** | Common patterns and trailing digit sequences |
-| **Compliance Assessment** | Pass/Fail status for NIST, PCI, HIPAA, CIS |
+| **Compliance Assessment** | Per-framework compliance: % Compliant (green) and % fail (red) for NIST, PCI, HIPAA, CIS |
 | **Recommendations** | Actionable security improvements |
 
 ### Usage Options
@@ -181,29 +181,32 @@ See `README_report_generator.md` for the full citation table.
 | **PCI DSS** | v4.0.1 Req 8.3.6 | 12 chars |
 | **HIPAA** | 45 CFR 164.308(a)(5)(ii)(D) | No explicit length; OCR -> NIST 800-63B |
 | **CIS Controls** | v8.1 Safeguard 5.2 | 14 chars non-MFA / 8 chars MFA |
-| **Composition Rules** | NIST 800-63B-4 §3.1.1.2 | Prohibited (SHALL NOT) |
+| **Composition Rules** | NIST 800-63B-4 §3.1.1.2 | Complexity and composition rules not permitted |
 
-**Pass/Fail Logic:**
-- **PASS**: 100% of cracked passwords meet the minimum length requirement
-- **FAIL**: Any passwords below the minimum length requirement
-- Percentages are calculated using `floor()` for strict compliance (99.5% displays as 99%, not rounded to 100%)
-- Percentages show what portion of passwords are compliant
+**Display and Pass/Fail Logic:**
+- Each row shows two figures: **`N% Compliant`** (green, the share meeting the requirement) and **`M% fail`** (red, the share below it). The two always sum to 100.
+- **PASS** only when 100% of cracked passwords meet the minimum length; otherwise **FAIL**, shown as the fail percentage.
+- Compliant % uses `floor()` for strict compliance (99.5% displays as 99%, never rounded up to 100%); fail % is the exact complement (`100 - floored compliant`), so the two never disagree.
+- Requirement wording is plain English, no RFC-2119 "SHALL"/"SHALL NOT" (e.g. "Minimum 15 characters required (single-factor logins)").
+- The **Composition Rules** row is an inverted indicator (NIST prohibits composition rules), so a high "legacy enforced" % is a negative finding and is shown in red. It is a proxy (passwords containing mixed character types), not a hard pass/fail control.
 
 **Calculation Method:**
 - All compliance percentages are calculated from pipal's complete password length distribution
 - Formula: `(count of passwords >= N chars) / total_cracked * 100`
 - The tool captures ALL password lengths from pipal output (no truncation)
+- The Password Length table shows the top 8 lengths by count plus an **"All other lengths"** row, so the displayed distribution always reconciles to 100% of the cracked total
 - Data coverage validation ensures all passwords are accounted for in calculations
 
 **Example Output:**
 ```
-Framework         Citation                       Requirement                              Status
-NIST SP 800-63B   Rev 4 §3.1.1.2 (Aug 2025)      Min 15 chars SHALL (single-factor)        7% FAIL
-PCI DSS           v4.0.1 Req 8.3.6               Min 12 chars                              35% FAIL
-HIPAA             45 CFR 164.308(a)(5)(ii)(D)    No explicit length; OCR -> NIST 800-63B   7% FAIL (per NIST)
-CIS Controls      v8.1 Safeguard 5.2             Min 14 chars non-MFA / 8 chars MFA        12% FAIL
-Composition Rules NIST 800-63B-4 §3.1.1.2        SHALL NOT impose composition rules        51% legacy enforced
+Framework         Citation                       Requirement                                             Compliance
+NIST SP 800-63B   Rev 4 §3.1.1.2 (Aug 2025)      Minimum 15 characters required (single-factor logins)    7% Compliant   93% fail
+PCI DSS           v4.0.1 Req 8.3.6               Min 12 chars                                            35% Compliant   65% fail
+HIPAA             45 CFR 164.308(a)(5)(ii)(D)    No explicit length; OCR -> NIST 800-63B                  7% Compliant   93% fail (per NIST)
+CIS Controls      v8.1 Safeguard 5.2             Min 14 chars non-MFA / 8 chars MFA                      12% Compliant   88% fail
+Composition Rules NIST 800-63B-4 §3.1.1.2        Complexity and composition rules not permitted          51% legacy enforced
 ```
+In the rendered HTML report, `N% Compliant` is green and `M% fail` is red (the Composition Rules "legacy enforced" figure is red as a negative indicator), on a white background.
 
 **Data Coverage Warning:**
 If the sum of password lengths doesn't equal the total cracked count (e.g., due to parsing issues), the report displays a warning showing the percentage of passwords analyzed.
@@ -224,7 +227,20 @@ The generated HTML report includes:
 
 ## Version History
 
-### Report Generator Updates (May 2026) — Framework Citation Audit
+### Report Generator Updates (August 2026): Client-Facing Clarity Pass
+
+Compliance section reworked for accuracy-on-the-face and readability. All five
+citations re-verified against primary sources (NIST 800-63B-4, PCI SSC, CIS,
+HHS/eCFR):
+
+1. **Plain-language requirements** - Removed RFC-2119 "SHALL"/"SHALL NOT" jargon from the client face (e.g. "Minimum 15 characters required (single-factor logins)", "Complexity and composition rules not permitted").
+2. **Dual compliance/fail display** - Each row now shows `N% Compliant` (green) and `M% fail` (red); the two always sum to 100. Fail % is the exact complement of the floored compliant %.
+3. **Composition Rules colored red** - Inverted-polarity indicator (NIST prohibits composition rules), so a high "legacy enforced" % renders red as a negative finding.
+4. **Length table reconciles to 100%** - Added an "All other lengths" row so the displayed distribution always accounts for every cracked password (top-8 lengths no longer silently sum to under 100%).
+5. **Explicit white background** - `body` now sets a white background so the report renders correctly in dark-mode browsers and PDF exporters.
+6. **Layout evened up** - Two-column sections fill the full width, aligning their right edge with the full-width Compliance table.
+
+### Report Generator Updates (May 2026): Framework Citation Audit
 
 All compliance citations verified against primary sources (NIST CSRC, PCI SSC,
 HHS OCR/eCFR, CIS) on 2026-05-19. Key corrections:

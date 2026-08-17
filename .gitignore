@@ -6,3 +6,4 @@ custom_splitter.rb
 __pycache__/
 *.pyc
 .env
+CHANGELOG.md

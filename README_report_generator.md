@@ -88,7 +88,7 @@ Report generated: audit_report.html
 | **Password Length** | Distribution with visual bar chart |
 | **Character Analysis** | Character set composition breakdown |
 | **Pattern Analysis** | Common patterns and trailing digit sequences |
-| **Compliance Assessment** | Pass/Fail for NIST, PCI, HIPAA, CIS |
+| **Compliance Assessment** | Per-framework % Compliant (green) + % fail (red) for NIST, PCI, HIPAA, CIS |
 | **Recommendations** | Actionable security improvements |
 
 ## Compliance Assessment
@@ -105,11 +105,13 @@ against primary sources (NIST CSRC, PCI SSC, HHS OCR, CIS) as of May 2026.
 | **Composition Rules** | NIST 800-63B-4 §3.1.1.2 | Prohibited | Rev 4 strengthens "SHOULD NOT" to "SHALL NOT impose other composition rules." Generator reports the legacy alpha+num+special compliance percentage but frames it as legacy enforcement, not a positive control. |
 | **Blank / Empty** | AD `ADS_UF_PASSWD_NOTREQD` (0x20 / 32) | Must be 0 | userAccountControl bit permitting empty passwords. High-risk misconfiguration on normal user accounts. |
 
-### Pass/Fail Logic
+### Display and Pass/Fail Logic
 
-- **PASS**: 100% of cracked passwords meet the minimum length requirement
-- **FAIL**: Any passwords below the minimum length requirement
-- Percentages use `floor()` for strict compliance (99.5% displays as 99%, not 100%)
+- Each row shows **`N% Compliant`** (green) and **`M% fail`** (red); the two always sum to 100.
+- **PASS** only at 100% compliant; otherwise **FAIL**, shown as the fail percentage.
+- Compliant % uses `floor()` for strict compliance (99.5% displays as 99%, never rounded up to 100%); fail % is the exact complement (`100 - floored compliant`).
+- Requirement text is plain English on the client face, no "SHALL"/"SHALL NOT" ("Minimum 15 characters required (single-factor logins)", "Complexity and composition rules not permitted").
+- The Composition Rules figure is an inverted proxy indicator and renders red (a high legacy-enforced % is the negative outcome, not a positive control).
 
 ### Calculation Method
 
@@ -207,13 +209,13 @@ Open `password_report.html` in a browser and:
 ```
 Compliance Assessment
 ---------------------
-Framework         Citation                       Requirement                              Status
-NIST SP 800-63B   Rev 4 §3.1.1.2 (Aug 2025)      Min 15 chars SHALL (single-factor)        7% FAIL
-PCI DSS           v4.0.1 Req 8.3.6               Min 12 chars                              35% FAIL
-HIPAA             45 CFR 164.308(a)(5)(ii)(D)    No explicit length; OCR -> NIST 800-63B   7% FAIL (per NIST)
-CIS Controls      v8.1 Safeguard 5.2             Min 14 chars non-MFA / 8 chars MFA        12% FAIL
-Composition Rules NIST 800-63B-4 §3.1.1.2        SHALL NOT impose composition rules        51% legacy enforced
-Blank / Empty     AD UF_PASSWD_NOTREQD flag      Accounts with empty NT hash               0.1% of cracked
+Framework         Citation                       Requirement                                             Compliance
+NIST SP 800-63B   Rev 4 §3.1.1.2 (Aug 2025)      Minimum 15 characters required (single-factor logins)    7% Compliant   93% fail
+PCI DSS           v4.0.1 Req 8.3.6               Min 12 chars                                            35% Compliant   65% fail
+HIPAA             45 CFR 164.308(a)(5)(ii)(D)    No explicit length; OCR -> NIST 800-63B                  7% Compliant   93% fail (per NIST)
+CIS Controls      v8.1 Safeguard 5.2             Min 14 chars non-MFA / 8 chars MFA                      12% Compliant   88% fail
+Composition Rules NIST 800-63B-4 §3.1.1.2        Complexity and composition rules not permitted          51% legacy enforced
+Blank / Empty     AD UF_PASSWD_NOTREQD flag      Accounts with empty NT hash                              0.1% of cracked
 ```
 
 ## Troubleshooting
