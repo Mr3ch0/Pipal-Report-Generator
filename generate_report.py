@@ -285,12 +285,24 @@ class PasswordReportGenerator:
             for length, count, pct in self.length_distribution[:8]:
                 bar_width = int((count / max_length_count) * 100) if max_length_count > 0 else 0
                 content += f'      <tr><td>{length} chars</td><td class="right">{count}</td><td class="right">{pct:.1f}</td><td><span class="bar" style="width:{bar_width}%"></span></td></tr>\n'
+            # Reconciliation row: every password has exactly one length, so the shown
+            # distribution must account for 100% of the cracked total. The table displays
+            # only the top 8 lengths by count; fold every remaining length into one
+            # aggregated row so the visible column never silently sums to less than the
+            # whole. The per-length detail stays behind the scenes; the face always ties out.
+            shown_count = sum(count for length, count, pct in self.length_distribution[:8])
+            all_len_count = sum(count for length, count, pct in self.length_distribution if str(length).isdigit())
+            remainder_count = all_len_count - shown_count
+            has_remainder = remainder_count > 0
+            if has_remainder:
+                remainder_pct = (remainder_count / self.total_cracked * 100) if self.total_cracked > 0 else 0
+                content += f'      <tr><td>All other lengths</td><td class="right">{remainder_count}</td><td class="right">{remainder_pct:.1f}</td><td></td></tr>\n'
             # Add compliance summary rows
             meets_12_pct = sum(count for length, count, pct in self.length_distribution if length.isdigit() and int(length) >= 12)
             meets_12_pct = (meets_12_pct / self.total_cracked * 100) if self.total_cracked > 0 else 0
             content += f'      <tr class="summary"><td colspan="4"><b>Compliance:</b> {meets_12_pct:.0f}% meet 12+ char minimum</td></tr>\n'
             content += '    </table>'
-            sections.append(('Password Length', content, len_rows + 3))
+            sections.append(('Password Length', content, len_rows + 3 + (1 if has_remainder else 0)))
 
         # Section: Character Analysis (merged composition + sets)
         content = '<table>\n      <tr><th>Category</th><th class="right">Count</th><th class="right">%</th></tr>\n'
