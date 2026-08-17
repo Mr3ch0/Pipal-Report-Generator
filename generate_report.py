@@ -534,8 +534,8 @@ class PasswordReportGenerator:
     .compliance-table .framework-name {{ font-weight: bold; white-space: nowrap; }}
     .compliance-table .citation {{ font-family: "SF Mono", Menlo, Consolas, monospace; font-size: 8pt; color: #444; }}
     .compliance-table .status-cell {{ text-align: right; white-space: nowrap; }}
-    .compliance-table .status-pct {{ font-size: 13pt; font-weight: bold; }}
-    .compliance-table .status-verdict {{ font-size: 11pt; font-weight: bold; margin-left: 7px; }}
+    .compliance-table .status-pct {{ font-size: 10pt; font-weight: bold; }}
+    .compliance-table .status-verdict {{ font-size: 10pt; font-weight: bold; margin-left: 7px; }}
     @page {{ size: letter; margin: 0.3in; }}
     @media print {{
       body {{ padding: 0; max-width: none; font-size: 9pt; }}
@@ -549,8 +549,8 @@ class PasswordReportGenerator:
       .summary-label {{ font-size: 7.5pt; }}
       .compliance-section {{ margin-top: 3px; }}
       .compliance-table th, .compliance-table td {{ padding: 3px 6px; font-size: 9.5pt; }}
-      .compliance-table .status-pct {{ font-size: 12pt; }}
-      .compliance-table .status-verdict {{ font-size: 10pt; }}
+      .compliance-table .status-pct {{ font-size: 9.5pt; }}
+      .compliance-table .status-verdict {{ font-size: 9.5pt; }}
     }}
   </style>
 </head>
