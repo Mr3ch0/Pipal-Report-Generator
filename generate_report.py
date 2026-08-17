@@ -505,7 +505,7 @@ class PasswordReportGenerator:
     h1 {{ font-size: 14pt; margin-bottom: 4px; text-align: center; }}
     h2 {{ font-size: 9.5pt; margin: 4px 0 2px 0; background: #333; color: white; padding: 2px 5px; }}
     .container {{ display: flex; gap: 8px; }}
-    .col {{ flex: 1; min-width: 47%; max-width: 49%; }}
+    .col {{ flex: 1 1 0; min-width: 0; }}
     table {{ width: 100%; border-collapse: collapse; margin-bottom: 2px; }}
     th, td {{ border: 1px solid #ccc; padding: 1px 3px; text-align: left; font-size: 9pt; line-height: 1.15; }}
     th {{ background: #f0f0f0; font-weight: bold; }}
