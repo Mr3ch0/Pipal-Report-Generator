@@ -372,6 +372,14 @@ class PasswordReportGenerator:
         cis_status = "pass" if pct_14_display >= 100 else "fail"
         cis_text = "PASS" if pct_14_display >= 100 else "FAIL"
 
+        # Option C verdict: passing rows read "PASS"; failing rows show the deficiency
+        # (percent NOT meeting the requirement) so the compliant and fail figures on the
+        # face always sum to 100. Fail = 100 - floored compliant, keeping the row reconciled.
+        nist_verdict = "PASS" if nist_status == "pass" else f"{100 - pct_15_display}% fail"
+        pci_verdict = "PASS" if pci_status == "pass" else f"{100 - pct_12_display}% fail"
+        hipaa_verdict = "PASS (per NIST)" if hipaa_status == "pass" else f"{100 - pct_15_display}% fail (per NIST)"
+        cis_verdict = "PASS" if cis_status == "pass" else f"{100 - pct_14_display}% fail"
+
         # Compliance Assessment is rendered as a standalone full-width section AFTER the
         # 2-column flow (built later in this method as `compliance_section_html`).
         # See verified citations (May 2026):
@@ -415,7 +423,7 @@ class PasswordReportGenerator:
         <th>Framework</th>
         <th>Citation</th>
         <th>Requirement</th>
-        <th class="right">Compliance (% meeting requirement)</th>
+        <th class="right">Compliance</th>
       </tr>
     </thead>
     <tbody>
@@ -423,25 +431,25 @@ class PasswordReportGenerator:
         <td class="framework-name">NIST SP 800-63B</td>
         <td class="citation">Rev 4 &sect;3.1.1.2 (Aug 2025)</td>
         <td>Min 15 chars SHALL (single-factor)</td>
-        <td class="status-cell"><span class="status-pct {nist_status}">{pct_15_display}% meet</span><span class="status-verdict {nist_status}">{nist_text}</span></td>
+        <td class="status-cell"><span class="status-pct {nist_status}">{pct_15_display}% Compliant</span><span class="status-verdict {nist_status}">{nist_verdict}</span></td>
       </tr>
       <tr>
         <td class="framework-name">PCI DSS</td>
         <td class="citation">v4.0.1 Req 8.3.6</td>
-        <td>Min 12 chars (8 only if legacy system can't support 12)</td>
-        <td class="status-cell"><span class="status-pct {pci_status}">{pct_12_display}% meet</span><span class="status-verdict {pci_status}">{pci_text}</span></td>
+        <td>Min 12 chars</td>
+        <td class="status-cell"><span class="status-pct {pci_status}">{pct_12_display}% Compliant</span><span class="status-verdict {pci_status}">{pci_verdict}</span></td>
       </tr>
       <tr>
         <td class="framework-name">HIPAA</td>
         <td class="citation">45 CFR 164.308(a)(5)(ii)(D)</td>
         <td>No explicit length; HHS OCR guidance recommends NIST 800-63B alignment. NPRM pending (90 FR 898)</td>
-        <td class="status-cell"><span class="status-pct {hipaa_status}">{pct_15_display}% meet</span><span class="status-verdict {hipaa_status}">{hipaa_text} (per NIST)</span></td>
+        <td class="status-cell"><span class="status-pct {hipaa_status}">{pct_15_display}% Compliant</span><span class="status-verdict {hipaa_status}">{hipaa_verdict}</span></td>
       </tr>
       <tr>
         <td class="framework-name">CIS Controls</td>
         <td class="citation">v8.1 Safeguard 5.2</td>
         <td>Min 14 chars non-MFA / 8 chars with MFA</td>
-        <td class="status-cell"><span class="status-pct {cis_status}">{pct_14_display}% meet</span><span class="status-verdict {cis_status}">{cis_text}</span></td>
+        <td class="status-cell"><span class="status-pct {cis_status}">{pct_14_display}% Compliant</span><span class="status-verdict {cis_status}">{cis_verdict}</span></td>
       </tr>
       <tr>
         <td class="framework-name">Composition Rules</td>
