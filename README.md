@@ -172,7 +172,7 @@ python3 generate_report.py
 ### Compliance Assessment
 
 The report evaluates password compliance against major security standards. Citations
-verified against primary sources (NIST CSRC, PCI SSC, HHS OCR, CIS) as of May 2026.
+verified against primary sources (NIST CSRC, PCI SSC, HHS OCR, CIS); most recently re-verified August 2026.
 See `README_report_generator.md` for the full citation table.
 
 | Framework | Citation | Threshold |

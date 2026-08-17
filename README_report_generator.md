@@ -94,7 +94,7 @@ Report generated: audit_report.html
 ## Compliance Assessment
 
 The report evaluates passwords against major security standards. Citations verified
-against primary sources (NIST CSRC, PCI SSC, HHS OCR, CIS) as of May 2026.
+against primary sources (NIST CSRC, PCI SSC, HHS OCR, CIS); most recently re-verified August 2026.
 
 | Framework | Citation | Threshold | Notes |
 |-----------|----------|-----------|-------|
