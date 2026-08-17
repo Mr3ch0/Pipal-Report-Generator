@@ -415,7 +415,7 @@ class PasswordReportGenerator:
         <th>Framework</th>
         <th>Citation</th>
         <th>Requirement</th>
-        <th class="right">Status</th>
+        <th class="right">Compliance (% meeting requirement)</th>
       </tr>
     </thead>
     <tbody>
@@ -423,25 +423,25 @@ class PasswordReportGenerator:
         <td class="framework-name">NIST SP 800-63B</td>
         <td class="citation">Rev 4 &sect;3.1.1.2 (Aug 2025)</td>
         <td>Min 15 chars SHALL (single-factor)</td>
-        <td class="status-cell"><span class="status-pct {nist_status}">{pct_15_display}%</span><span class="status-verdict {nist_status}">{nist_text}</span></td>
+        <td class="status-cell"><span class="status-pct {nist_status}">{pct_15_display}% meet</span><span class="status-verdict {nist_status}">{nist_text}</span></td>
       </tr>
       <tr>
         <td class="framework-name">PCI DSS</td>
         <td class="citation">v4.0.1 Req 8.3.6</td>
         <td>Min 12 chars (8 only if legacy system can't support 12)</td>
-        <td class="status-cell"><span class="status-pct {pci_status}">{pct_12_display}%</span><span class="status-verdict {pci_status}">{pci_text}</span></td>
+        <td class="status-cell"><span class="status-pct {pci_status}">{pct_12_display}% meet</span><span class="status-verdict {pci_status}">{pci_text}</span></td>
       </tr>
       <tr>
         <td class="framework-name">HIPAA</td>
         <td class="citation">45 CFR 164.308(a)(5)(ii)(D)</td>
         <td>No explicit length; HHS OCR guidance recommends NIST 800-63B alignment. NPRM pending (90 FR 898)</td>
-        <td class="status-cell"><span class="status-pct {hipaa_status}">{pct_15_display}%</span><span class="status-verdict {hipaa_status}">{hipaa_text} (per NIST)</span></td>
+        <td class="status-cell"><span class="status-pct {hipaa_status}">{pct_15_display}% meet</span><span class="status-verdict {hipaa_status}">{hipaa_text} (per NIST)</span></td>
       </tr>
       <tr>
         <td class="framework-name">CIS Controls</td>
         <td class="citation">v8.1 Safeguard 5.2</td>
         <td>Min 14 chars non-MFA / 8 chars with MFA</td>
-        <td class="status-cell"><span class="status-pct {cis_status}">{pct_14_display}%</span><span class="status-verdict {cis_status}">{cis_text}</span></td>
+        <td class="status-cell"><span class="status-pct {cis_status}">{pct_14_display}% meet</span><span class="status-verdict {cis_status}">{cis_text}</span></td>
       </tr>
       <tr>
         <td class="framework-name">Composition Rules</td>
