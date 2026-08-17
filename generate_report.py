@@ -499,6 +499,8 @@ class PasswordReportGenerator:
       padding: 6px 12px;
       max-width: 7.7in;
       line-height: 1.2;
+      background: #ffffff;
+      color: #111111;
     }}
     h1 {{ font-size: 14pt; margin-bottom: 4px; text-align: center; }}
     h2 {{ font-size: 9.5pt; margin: 4px 0 2px 0; background: #333; color: white; padding: 2px 5px; }}
@@ -512,7 +514,7 @@ class PasswordReportGenerator:
     .critical {{ background: #ffcccc; }}
     .high {{ background: #ffe6cc; }}
     .medium {{ background: #ffffcc; }}
-    .compliant {{ background: #ccffcc; }}
+    .compliant {{ color: #0a0; font-weight: bold; }}
     .summary {{ background: #f8f8f8; font-size: 8.5pt; }}
     .summary-box {{ background: #f5f5f5; padding: 4px; margin-bottom: 5px; }}
     .summary-grid {{ display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px; text-align: center; }}
@@ -525,7 +527,6 @@ class PasswordReportGenerator:
     code {{ background: #eee; padding: 0 2px; font-size: 8.5pt; font-family: monospace; }}
     .fail {{ color: #c00; font-weight: bold; }}
     .pass {{ color: #090; font-weight: bold; }}
-    .compliant {{ color: #0a0; font-weight: bold; }}
     .compliance-section {{ margin-top: 5px; page-break-inside: avoid; }}
     .compliance-table th, .compliance-table td {{ padding: 4px 8px; vertical-align: middle; font-size: 10pt; line-height: 1.35; }}
     .compliance-table th {{ background: #333; color: white; font-size: 10pt; }}
