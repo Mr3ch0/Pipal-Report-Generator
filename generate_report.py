@@ -455,7 +455,7 @@ class PasswordReportGenerator:
         <td class="framework-name">Composition Rules</td>
         <td class="citation">NIST 800-63B-4 &sect;3.1.1.2</td>
         <td>Complexity and composition rules not permitted</td>
-        <td class="status-cell"><span class="status-pct">{pct_complexity_display}%</span><span class="status-verdict">legacy enforced</span></td>
+        <td class="status-cell"><span class="status-pct fail">{pct_complexity_display}%</span><span class="status-verdict fail">legacy enforced</span></td>
       </tr>{blank_row}{coverage_note}
     </tbody>
   </table>
